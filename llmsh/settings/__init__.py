@@ -15,4 +15,8 @@
 from .settings import Settings
 
 
-settings = Settings()
+try:
+    settings = Settings()
+except Exception as e:
+    print(f"Failed to load settings: {e}")
+    exit(1)

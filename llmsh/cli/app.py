@@ -50,7 +50,7 @@ litellm.suppress_debug_info = True
 
 @handle_exceptions
 def loop(
-    prompt: params.prompt = settings.user_prompt,
+    prompt: params.prompt = settings.prompt,
     model: params.model = settings.model,
     system: params.system = settings.system_prompt,
     limit: params.limit = settings.limit,

@@ -52,6 +52,7 @@ rich = "^13.7.1"
 inquirer = "^3.2.4"
 typer = "^0.12.1"
 pydantic = "^2.6.4"
+pydantic-settings = "^2.2.1"
 
 [tool.poetry.scripts]
 llmsh = "llmsh.cli.app:run"

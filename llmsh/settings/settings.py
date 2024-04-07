@@ -14,7 +14,8 @@
 
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 _default_system_prompt = """You are a helpful assistant.
@@ -25,8 +26,10 @@ Use markdown to format your answers.
 _default_user_prompt = ""
 
 
-class Settings(BaseModel):
-    user_prompt: Optional[str] = Field(_default_user_prompt)
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="llmsh_")
+
+    prompt: Optional[str] = Field(_default_user_prompt)
     system_prompt: str = Field(_default_system_prompt)
     model: str = Field("gpt-4")
     system_role: str = Field("system")

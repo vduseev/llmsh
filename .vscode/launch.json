@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug: -m llmsh",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "llmsh",
+            "justMyCode": false,
+            "args": ["chat", "--help"],
+        }
+    ]
+}

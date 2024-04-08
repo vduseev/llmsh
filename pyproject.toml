@@ -14,7 +14,7 @@
 
 [tool.poetry]
 name = "llmsh"
-version = "0.1"
+version = "0.2"
 description = """
 Command-line tool to use Large Language Models in your shell,\
 including OpenAI, Anthropic, PalM, Mistral, Cohere, and more.\

@@ -1,3 +1,17 @@
+# Copyright 2024 Vagiz Duseev <vagiz@duseev.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from pathlib import Path
 from typing import Optional
 
@@ -28,9 +42,9 @@ def safe_read_text(path: Path) -> str:
         raise typer.Exit(1)
 
 
-def read_if_path(prompt: str) -> Optional[str]:
+def read_if_path(prompt: Optional[str]) -> Optional[str]:
     result: str | None = None
-    if prompt.startswith("@"):
+    if prompt and prompt.startswith("@"):
         path = Path(prompt[1:])
         check_file_exists(path)
         result = safe_read_text(path)
@@ -39,14 +53,19 @@ def read_if_path(prompt: str) -> Optional[str]:
 
 def prepare_context(
     messages: list[Message],
-    system: str,
+    before: Optional[str] = None,
+    after: Optional[str] = None,
     limit: Optional[int] = None,
 ) -> list[str]:
     prepared_messages = messages[-limit:] if limit else messages
-    prepared_messages.insert(0, Message(role=settings.system_role, content=system))
+
+    if before:
+        prepared_messages.insert(0, Message(role=settings.system_role, content=before))
+    if after:
+        prepared_messages.append(Message(role=settings.system_role, content=after))
     
-    contexxt = [m.base() for m in prepared_messages]
-    return contexxt
+    context = [m.base() for m in prepared_messages]
+    return context
 
 
 def get_user_prompt(prompt: str) -> str:

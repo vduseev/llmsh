@@ -18,9 +18,11 @@ from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-_default_system_prompt = """You are a helpful assistant.
+_default_before_prompt = """You are a helpful assistant.
 Your goal is to help the user.
-Be concise and clear. Don't repear what user has said in their last message.
+"""
+_default_after_prompt = """Be concise and clear.
+Don't repear what user has said in their last message.
 Use markdown to format your answers.
 """
 _default_user_prompt = ""
@@ -30,12 +32,14 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="llmsh_")
 
     prompt: Optional[str] = Field(_default_user_prompt)
-    system_prompt: str = Field(_default_system_prompt)
+    before: Optional[str] = Field(_default_before_prompt)
+    after: Optional[str] = Field(_default_after_prompt)
     model: str = Field("gpt-4")
     system_role: str = Field("system")
-    client_role: str = Field("user")
-    server_role: str = Field("assistant")
+    user_role: str = Field("user")
+    llm_role: str = Field("assistant")
     limit: Optional[int] = Field(None)
     max_tokens: Optional[int] = Field(None)
     no_stream: bool = Field(False)
     interactive: bool = Field(False)
+    debug: bool = Field(False)

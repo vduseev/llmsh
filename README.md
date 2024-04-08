@@ -87,8 +87,11 @@ on numerous adventures in an imaginative world with her backpack and her talking
 
 #### Specify a system prompt
 
+The system prompt is a prompt that is always present in the conversation.
+It is added to the beginning of the conversation before sending it to the model.
+
 ```shell
-$ llmsh "@prompt.txt" -s "You are Dora the Explorer. Help me learn Spanish"
+$ llmsh "@prompt.txt" -b "You are Dora the Explorer. Help me learn Spanish"
 ¡Hola! I'm Dora. I help kids to learn Spanish through fun       
 adventures. I explore various environments with my talking backpack and monkey friend, Boots. Do you want to learn some Spanish words with me today? 
 ```
@@ -112,10 +115,9 @@ difference remains the same. New York is 6 hours behind Gdansk.
 ```
 
 *You can also use a file as a prompt: `-i @prompt.txt`.*
-*As well as a system prompt: `-i -s "You are a helpful assistant."`, which can also be sourced from a file.*
+*As well as a system prompt: `-i -b "You are a helpful assistant."`, which can also be sourced from a file.*
 
 *Piping is not supported in interactive mode.*
-
 
 ## Configuration
 
@@ -169,9 +171,9 @@ export MISTRAL_API_KEY="your-api-key"
   - Windows (cmd): `set LLMSH_PROMPT="Hello"`
   - Windows (PowerShell): `$env:LLMSH_PROMPT="Hello"`
 
-- `--system` The system prompt to use.
+- `--before` The system prompt to use.
   
-  *Shorthand: `-s`*
+  *Shorthand: `-b`*
   
   Interpreted as a path when starts with @.
   
@@ -179,19 +181,43 @@ export MISTRAL_API_KEY="your-api-key"
   - Pipe a question to LLM with a system prompt:
   
     ```shell
-    echo "Where is John Connor?" | llmsh -s "You are Terminator"
+    echo "Where is John Connor?" | llmsh -b "You are Terminator"
     ```
 
   - Use a file as a system prompt:
   
     ```shell
-    llmsh -s "@terminator.txt"`
+    llmsh -b "@terminator.txt"`
     ```
   
   *As environment variable:*
-  - Linux/macOS: `export LLMSH_SYSTEM_PROMPT="You are Terminator"`
-  - Windows (cmd): `set LLMSH_SYSTEM_PROMPT="@C:\LLM\terminator.txt"`
-  - Windows (PowerShell): `$env:LLMSH_SYSTEM_PROMT="You are Terminator"`
+  - Linux/macOS: `export LLMSH_BEFORE_PROMPT="You are Terminator"`
+  - Windows (cmd): `set LLMSH_BEFORE_PROMPT="@C:\LLM\terminator.txt"`
+  - Windows (PowerShell): `$env:LLMSH_BEFORE_PROMPT="You are Terminator"`
+
+- `--after` The system prompt to be added as last message.
+  
+  *Shorthand: `-a`*
+  
+  Interpreted as a path when starts with @.
+  
+  *Examples:*
+  - Ask LLM to write a poem with a system prompt:
+  
+    ```shell
+    llmsh "Write a poem" -a "Use asterisks to emphasize the words"
+    ```
+
+  - Use a file as a system prompt:
+  
+    ```shell
+    llmsh "Write a poem" -a "@poet.txt"
+    ```
+  
+  *As environment variable:*
+  - Linux/macOS: `export LLMSH_AFTER_PROMPT="You are a poet"`
+  - Windows (cmd): `set LLMSH_AFTER_PROMPT="You are a poet"`
+  - Windows (PowerShell): `$env:LLMSH_AFTER_PROMPT="You are a poet"`
 
 - `--model` The name of model to use.
 

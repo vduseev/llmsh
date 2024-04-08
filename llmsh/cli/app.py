@@ -12,29 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import os
 import sys
 import threading
 
 import litellm
 import typer
-from litellm.exceptions import (
-    AuthenticationError,
-    NotFoundError,
-    BadRequestError,
-    UnprocessableEntityError,
-    Timeout,
-    PermissionDeniedError,
-    RateLimitError,
-    ContextWindowExceededError,
-    ContentPolicyViolationError,
-    ServiceUnavailableError,
-    APIError,
-    APIConnectionError,
-    APIResponseValidationError,
-    OpenAIError,
-    BudgetExceededError,
-)
 from rich.live import Live
 from rich.markdown import Markdown
 
@@ -46,28 +30,55 @@ from llmsh.settings import settings
 
 
 litellm.suppress_debug_info = True
+logging.basicConfig(
+    level=logging.ERROR,
+    stream=sys.stderr,
+    format="[%(asctime)s][%(module)s][%(levelname)s] %(message)s",
+)
+
+logger = logging.getLogger(__name__)
 
 
 @handle_exceptions
 def loop(
     prompt: params.prompt = settings.prompt,
     model: params.model = settings.model,
-    system: params.system = settings.system_prompt,
+    before: params.before = settings.before,
+    after: params.after = settings.after,
     limit: params.limit = settings.limit,
     max_tokens: params.tokens = settings.max_tokens,
     no_stream: params.no_stream = settings.no_stream,
     interactive: params.interactive = settings.interactive,
+    debug: params.debug = settings.debug,
 ):
-    # Determine system prompt
-    if text_from_file := utils.read_if_path(system):
-        system = text_from_file
+    if debug:
+        logging.root.setLevel(logging.DEBUG)
+
+    logger.debug(f"prompt: {prompt}")
+    logger.debug(f"model: {model}")
+    logger.debug(f"before: {before}")
+    logger.debug(f"after: {after}")
+    logger.debug(f"limit: {limit}")
+    logger.debug(f"max_tokens: {max_tokens}")
+    logger.debug(f"no_stream: {no_stream}")
+    logger.debug(f"interactive: {interactive}")
+
+    # Determine before prompt
+    if text_from_file := utils.read_if_path(before):
+        before = text_from_file
 
     # Determine initial prompt
     if text_from_file := utils.read_if_path(prompt):
         prompt = text_from_file
 
+    # Determine after prompt
+    if text_from_file := utils.read_if_path(after):
+        after = text_from_file
+
     is_pipe = not os.isatty(sys.stdin.fileno())
     if is_pipe:
+        logger.debug("Pipe mode detected.")
+
         if interactive:
             # Pipe mode is not supported in chat mode.
             # This is because we can't switch to read user's input after
@@ -82,9 +93,13 @@ def loop(
                 pipe_prompt += input()
         except EOFError:
             pass
+        logger.debug(f"pipe_prompt: {pipe_prompt}")
 
         # Append pipe prompt to the user prompt
-        prompt += f"\n{pipe_prompt}"
+        if prompt:
+            prompt += f"\n{pipe_prompt}"
+        else:
+            prompt = pipe_prompt
 
     keyboard_interrupt_event = threading.Event()
     exit_event = threading.Event()
@@ -100,6 +115,7 @@ def loop(
             if not prompt:
                 if interactive:
                     prompt = console.input("> ")
+                    logger.debug(f"input_prompt: {prompt}")
                 else:
                     console.print("[red]Non-interactive mode requires a prompt.[/red]")
                     raise typer.Exit(1)
@@ -109,10 +125,11 @@ def loop(
                 utils.quit_on_request(prompt)
 
             # Prepare context
-            messages.append(Message(role=settings.client_role, content=prompt))
+            messages.append(Message(role=settings.user_role, content=prompt))
             context = utils.prepare_context(
                 messages=messages,
-                system=system,
+                before=before,
+                after=after,
                 limit=limit,
             )
 
@@ -128,7 +145,7 @@ def loop(
             if no_stream:
                 # Record the arrived response
                 content = response.choices[0].message.content or ""
-                messages.append(Message(role=settings.server_role, content=content))
+                messages.append(Message(role=settings.llm_role, content=content))
 
                 # Render the markdown
                 markdown = Markdown(content)
@@ -136,7 +153,7 @@ def loop(
 
             else:
                 # Record a new empty message
-                messages.append(Message(role=settings.server_role, content=""))
+                messages.append(Message(role=settings.llm_role, content=""))
 
                 # Keep updating the markdown renderable with the response
                 # as it comes in.

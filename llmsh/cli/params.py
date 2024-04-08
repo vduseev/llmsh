@@ -33,12 +33,21 @@ model = Annotated[
         help="Model name.",
     ),
 ]
-system = Annotated[
+before = Annotated[
     Optional[str],
     typer.Option(
-        "--system",
-        "-s",
-        help="System message or a path to file, when started with @.",
+        "--before",
+        "-b",
+        help="System prompt or path to file (if starts with @) added as first message.",
+        show_default=False,
+    ),
+]
+after = Annotated[
+    Optional[str],
+    typer.Option(
+        "--after",
+        "-a",
+        help="System prompt or path to file (if starts with @) added as last message.",
         show_default=False,
     ),
 ]
@@ -73,5 +82,12 @@ interactive = Annotated[
         "--interactive",
         "-i",
         help="Interactive CHAT mode.",
+    ),
+]
+debug = Annotated[
+    bool,
+    typer.Option(
+        "--debug",
+        help="Print debug information.",
     ),
 ]

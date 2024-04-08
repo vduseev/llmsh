@@ -11,13 +11,30 @@ command-line.**
 
 *This is an alpha version and a work in progress.*
 
+- [Installation](#installation)
+  - [PyPI installation](#pypi-installation)
+  - [Installation script](#system-wide-installation)
+- [Usage](#usage)
+  - [Configure API keys](#usage-api_keys)
+  - [Prompt mode](#usage-prompt-mode)
+  - [Interactive chat mode](#usage-interactive-chat-mode)
+- [Configuration](#configuration)
+  - [API keys](#configuration-api-keys)
+  - [Parameters](#configuration-parameters)
+
+<a id="installation"></a>
+
 ## Installation
+
+<a id="pypi-installation"></a>
 
 ### PyPI installation
 
 ```shell
 pip install llmsh
 ```
+
+<a id="system-wide-installation"></a>
 
 ### Or use install.sh for system-wide installation
 
@@ -46,7 +63,11 @@ install the package, and create a symlink at `~/.local/bin/llmsh`.*
 $ ~/.llmsh/install.sh
 ```
 
+<a id="usage"></a>
+
 ## Usage
+
+<a id="usage-api_keys"></a>
 
 ### Configure API keys
 
@@ -54,6 +75,10 @@ $ ~/.llmsh/install.sh
 # If you are using OpenAI
 export OPENAI_API_KEY="your-api-key"
 ```
+
+*See [full list of supported models](#configuration-api-keys).*
+
+<a id="usage-prompt-mode"></a>
 
 ### Prompt mode
 
@@ -96,7 +121,9 @@ $ llmsh "@prompt.txt" -b "You are Dora the Explorer. Help me learn Spanish"
 adventures. I explore various environments with my talking backpack and monkey friend, Boots. Do you want to learn some Spanish words with me today? 
 ```
 
-*System prompt can also be a file: `-s @system.txt`.*
+*System prompt can also be a file: `-b @system.txt`.*
+
+<a id="usage-interactive-chat-mode"></a>
 
 ### Interactive chat mode
 
@@ -119,7 +146,11 @@ difference remains the same. New York is 6 hours behind Gdansk.
 
 *Piping is not supported in interactive mode.*
 
+<a id="configuration"></a>
+
 ## Configuration
+
+<a id="configuration-api-keys"></a>
 
 ### API keys
 
@@ -138,6 +169,8 @@ export MISTRAL_API_KEY="your-api-key"
 ```
 
 *See [full list of supported models](https://docs.litellm.ai/docs/providers).*
+
+<a id="configuration-parameters"></a>
 
 ### Parameters
 
@@ -264,13 +297,13 @@ export MISTRAL_API_KEY="your-api-key"
   - Start an interactive chat with a system prompt:
   
     ```shell
-    llmsh -i -s "You are a helpful assistant"
+    llmsh -i -b "You are a helpful assistant"
     ```
 
   - Start an interactive role play chat with Mistral 8x7b model:
   
     ```shell
-    llmsh -i -m "mistral/mistral-medium" -s "You are a poet and I am a critic"
+    llmsh -i -m "mistral/mistral-medium" -b "You are a poet and I am a critic"
     ```
 
   *As environment variable:*
@@ -327,6 +360,8 @@ export MISTRAL_API_KEY="your-api-key"
   - Linux/macOS: `export LLMSH_NO_STREAM="true"`
   - Windows (cmd): `set LLMSH_NO_STREAM="true"`
   - Windows (PowerShell): `$env:LLMSH_NO_STREAM="true"`
+
+<a id="roadmap"></a>
 
 ## Roadmap
 
